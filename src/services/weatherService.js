@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { utilService } from './utilService'
+import { storageService } from './storageService'
 
 
 export const weatherService = {
@@ -8,7 +9,7 @@ export const weatherService = {
     getLocationsList
 }
 
-
+const CURRENT_LOCATION = 'CurrLocation'
 const API_KEY = 'sh0OUQ7RvtXa9uUhfJCXLc3lNEqpVCeS'
 const initialLocation = {
     localizedName: 'Tel Aviv',
@@ -22,21 +23,23 @@ const initialFilter = {
 
 
 async function getLocation() {
-    if (navigator.geolocation) {
-
+    let currLocation = storageService.load(CURRENT_LOCATION) || null
+    if (!currLocation) {
         try {
-            const { coords } = await utilService.getCurrentPosition();
-            const { latitude, longitude } = coords;
-            const currentLocation = await _getLocationCodeByGeoLocation(latitude, longitude)
-            return currentLocation
+            const { coords } = await utilService.getCurrentPosition()
+            const { latitude, longitude } = coords
+            currLocation = await _getLocationCodeByGeoLocation(latitude, longitude)
+
         }
         catch (err) {
             console.log(`getLocation error`, err)
-        }
+            currLocation = { ...initialLocation }
 
-    } else {
-        return initialLocation
+        }
+        storageService.save(CURRENT_LOCATION, { ...currLocation, date: Date.now() })
     }
+
+    return currLocation
 
 }
 
