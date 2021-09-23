@@ -1,11 +1,11 @@
 import axios from 'axios'
+import { utilService } from './utilService'
 
 
 export const weatherService = {
     getLocation,
     getForecastByLocationKey,
     getLocationsList
-
 }
 
 
@@ -21,20 +21,26 @@ const initialFilter = {
 }
 
 
- function getLocation() {
+async function getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(async (position) => {
 
-            const res = await _getLocationCodeByGeoLocation(position.coords.latitude, position.coords.longitude)
-            let currentLocation = _getFormatedLocation(res['LocalizedName'], res['Key'], res['Country']['LocalizedName'])
+        try {
+            const { coords } = await utilService.getCurrentPosition();
+            const { latitude, longitude } = coords;
+            const currentLocation = await _getLocationCodeByGeoLocation(latitude, longitude)
             return currentLocation
+        }
+        catch (err) {
+            console.log(`getLocation error`, err)
+        }
 
-        })
     } else {
         return initialLocation
     }
 
 }
+
+
 
 
 async function getForecastByLocationKey(cityKey) {
@@ -51,7 +57,7 @@ async function getForecastByLocationKey(cityKey) {
 async function _getLocationCodeByGeoLocation(lat, lon) {
     try {
         const res = await axios.get(`http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${API_KEY}&q=${lat},${lon}`)
-        return res.data
+        return _getFormatedLocation(res.data['LocalizedName'], res.data['Key'], res.data['Country']['LocalizedName'])
     } catch (err) {
         console.log(`getLocationCodeByGeoLocation does not respond`, err)
     }
@@ -63,7 +69,7 @@ async function _getLocationCodeByGeoLocation(lat, lon) {
 async function getLocationsList(userInput) {
     try {
         const res = await axios.get(`http://dataservice.accuweather.com/locations/v1/cities/autocomplete?apikey=${API_KEY}&q=${userInput}`)
-        if (!res.data || res.data.length == 0) return null
+        if (!res.data || res.data.length === 0) return null
         const locations = res.data.map(city => {
             return _getFormatedLocation(city['LocalizedName'], city['Key'], city['Country']['LocalizedName'])
         }

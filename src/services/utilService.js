@@ -1,5 +1,6 @@
 export const utilService = {
-    makeId
+    makeId, 
+    getCurrentPosition
 };
 
 function makeId(length = 6) {
@@ -11,4 +12,12 @@ function makeId(length = 6) {
     }
 
     return txt;
+}
+
+
+
+function getCurrentPosition(options = {}) {
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    });
 }
