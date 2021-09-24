@@ -49,7 +49,7 @@ async function getLocation() {
 async function getForecastByLocationKey(cityKey) {
     try {
         const res = await axios.get(`http://dataservice.accuweather.com/forecasts/v1/daily/5day/${cityKey}?apikey=${API_KEY}&metric=true`)
-        return res.data
+        return (res.data['DailyForecasts'].length) ? res.data['DailyForecasts'] : []
     } catch (err) {
         console.log(`getForecastByLocationKey`)
     }

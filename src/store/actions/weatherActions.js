@@ -1,13 +1,27 @@
 import { weatherService } from '../../services/weatherService.js'
 
 
-export function loadForeacsts() {
+export function loadForeacsts(key='215854') {
     return async dispatch => {
         try {
-            const forecasts = await weatherService.query()
+            const forecasts = await weatherService.getForecastByLocationKey(key)
             dispatch({ type: 'SET_FORECASTS', forecasts })
         } catch (err) {
             console.log('there is a problem in loading forecasts in loadForeacsts action', err)
+        }
+
+    }
+}
+
+
+
+export function loadCurrentLocation() {
+    return async dispatch => {
+        try {
+            const currLocation = await weatherService.getLocation()
+            dispatch({ type: 'SET_CURRLOCATION', currLocation })
+        } catch (err) {
+            console.log('there is a problem in loading currLocation in loadCurrentLocation action', err)
         }
 
     }

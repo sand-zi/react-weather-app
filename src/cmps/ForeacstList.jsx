@@ -1,10 +1,10 @@
 import { ForecastPreview } from "./ForecastPreview"
 
-export const ForecastList = () => {
+export const ForecastList = ({ forecasts }) => {
     return (
         <div className="forecast-list">
-            Hello  I am Forecast list
-            <ForecastPreview/>
+            {forecasts.map(forecast => <ForecastPreview key={forecast['Date']} forecast={forecast} />)}
+
         </div>
     )
 }
