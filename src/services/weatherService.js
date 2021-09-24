@@ -72,7 +72,7 @@ async function _getLocationCodeByGeoLocation(lat, lon) {
 async function getLocationsList(userInput) {
     try {
         const res = await axios.get(`http://dataservice.accuweather.com/locations/v1/cities/autocomplete?apikey=${API_KEY}&q=${userInput}`)
-        if (!res.data || res.data.length === 0) return null
+        if (!res.data || res.data.length === 0) return []
         const locations = res.data.map(city => {
             return _getFormatedLocation(city['LocalizedName'], city['Key'], city['Country']['LocalizedName'])
         }
@@ -88,7 +88,7 @@ async function getLocationsList(userInput) {
 
 
 function _getFormatedLocation(localizedName, key, country) {
-    return { localizedName, key, country }
+    return { ...localizedName, key, country }
 }
 
 

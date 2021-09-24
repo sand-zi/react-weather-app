@@ -1,6 +1,6 @@
 export const ForecastPreview = ({ forecast }) => {
     return (
-        <div classNameName="forecast-preview">
+        <div className="forecast-preview">
             <div className="day-forecast">
                 <p className="date">{forecast['Date']}</p>
                 {/* <button onClick=" toggleShowDayForecast()"> Show {showDayForecast ? 'Night Forecast ' : 'Day Forecast'}</button> */}
