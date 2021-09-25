@@ -6,7 +6,8 @@ import { storageService } from './storageService'
 export const weatherService = {
     getLocation,
     getForecastByLocationKey,
-    getLocationsList
+    getLocationsList, 
+    saveLocation
 }
 
 const CURRENT_LOCATION = 'CurrLocation'
@@ -74,7 +75,7 @@ async function getLocationsList(userInput) {
         const res = await axios.get(`http://dataservice.accuweather.com/locations/v1/cities/autocomplete?apikey=${API_KEY}&q=${userInput}`)
         if (!res.data || res.data.length === 0) return []
         const locations = res.data.map(city => {
-            return _getFormatedLocation(city['LocalizedName'], city['Key'], city['Country']['LocalizedName'])
+            return _getFormatedLocation(city['LocalizedName'], city['Key'], city['Country']['LocalizedName'], true)
         }
         )
         return locations
@@ -82,14 +83,16 @@ async function getLocationsList(userInput) {
     } catch (err) {
         console.log(`There is an error in getLocationsList function`, err)
 
-
     }
 }
 
 
-function _getFormatedLocation(localizedName, key, country) {
-    return { localizedName, key, country }
+function _getFormatedLocation(localizedName, key, country, withId = false) {
+
+    return (withId) ? { localizedName, key, country, id: utilService.makeId() } : { localizedName, key, country }
 }
 
-
+function saveLocation(location) {
+    storageService.save(CURRENT_LOCATION, { ...location, date: Date.now() })
+}
 

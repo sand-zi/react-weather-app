@@ -1,7 +1,7 @@
 import { weatherService } from '../../services/weatherService.js'
 
 
-export function loadForeacsts(key='215854') {
+export function loadForeacsts(key = '215854') {
     return async dispatch => {
         try {
             const forecasts = await weatherService.getForecastByLocationKey(key)
@@ -27,6 +27,11 @@ export function loadCurrentLocation() {
     }
 }
 
+export function updateCurrentLocation(location) {
+    weatherService.saveLocation(location)
+    return (dispatch) => dispatch({ type: 'SET_CURRLOCATION', currLocation: location })
+}
+
 export function loadFavoriteCities() {
     return async dispatch => {
         try {
@@ -40,33 +45,6 @@ export function loadFavoriteCities() {
 }
 
 
-// export function removeToy(toyId) {
-//     return async dispatch => {
-//         try {
-//             await weatherService.remove(toyId)
-//             dispatch({ type: 'REMOVE_TOY', toyId })
-
-//         } catch (err) {
-//             console.log('there is problem in removing toy action')
-//             throw err
-//         }
-//     }
-// }
-
-
-// export function saveToy(toyToSave) {
-//     return async dispatch => {
-//         try {
-//             const type = toyToSave._id ? 'UPDATE_TOY' : 'ADD_TOY'
-//             const toy = await weatherService.save(toyToSave)
-//             dispatch({ type, toy })
-
-//         } catch (err) {
-//             console.log('there is problem in save toy action')
-//             throw err
-//         }
-//     }
-// }
 
 export function setFilter(filterBy) {
     return async dispatch => {
