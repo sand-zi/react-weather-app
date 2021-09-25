@@ -1,94 +1,61 @@
-import { useEffect, useCallback, useState } from 'react'
+import { useState, useRef } from 'react'
 import debounce from 'lodash.debounce';
-
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 import { weatherService } from '../services/weatherService.js'
+const customId = "error-toast";
+const throwError = (msg) => {
 
+    toast.error(msg, { autoClose: 3000, toastId: customId })
+};
 
 export const WeatherSearch = () => {
-
-    const [open, setOpen] = useState(false);
-    const [options, setOptions] = useState([]);
-    const loading = open && options.length === 0;
     const [value, setValue] = useState('');
+    const [options, setOptions] = useState([]);
 
 
-    useEffect(() => {
-        let active = true;
+    const performSearch = async (input) => {
 
-        if (!loading) {
-            return undefined;
+        const locationOptions = await weatherService.getLocationsList(input);
+
+        if (locationOptions.length) {
+            setOptions([...locationOptions]);
         }
-
-        (async () => {
-            const locationOptions = await weatherService.getLocationsList(value); 
-
-            if (active) {
-                setOptions([...locationOptions]);
-            }
-        })();
-
-        return () => {
-            active = false;
-        };
-    }, [loading]);
-
-    useEffect(() => {
-        if (!open) {
-            setOptions([]);
-        }
-    }, [open]);
-
-
-    const onHandleChange = (event) => {
-        const {target} = event
-   
-        let res = /^[a-zA-Z]+$/.test(target.value)
-        if(res){
-            setValue(target.value)
-        }
-        else return
     }
+    const debouncedSearch = useRef(debounce(input => performSearch(input), 2000)).current
 
-    const onDebouncedChangeHandler = useCallback(
-        debounce(onHandleChange , 300)
-      , []);
+
+    const onHandleChange = event => {
+        const { value } = event.target;
+        setValue(value);
+        let isEnglish = /^[a-zA-Z\s]*$/.test(value)
+
+        if (value.length > 0 && isEnglish) {
+
+            debouncedSearch(value);
+        }
+        else if (value.length > 0) {
+
+            throwError("The search is available on English only")
+            return
+        }
+
+
+    };
 
     return (
-        <Autocomplete
-            id="asynchronous-demo"
-            sx={{ width: 300 }}
-            open={open}
-            onOpen={() => {
-                setOpen(true);
-            }}
-            onClose={() => {
-                setOpen(false);
-            }}
-            // isOptionEqualToValue={(option, value) => option.localizedName === value.localizedName}
-            getOptionLabel={(option) => option.localizedName}
-            options={options}
-            loading={loading}
-            renderInput={(params) => (
-                <TextField
-                    {...params}
-                    label="Search City"
-                    value={value}
-                    onChange={onDebouncedChangeHandler}
-                    InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                            <>
-                                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                                {params.InputProps.endAdornment}
-                            </>
-                        ),
-                    }}
-                />
-            )}
-        />
+        <div className="weather-search">
+            <ToastContainer />
+            <TextField
+                value={value}
+                onChange={(ev) => onHandleChange(ev)}
+                label="Location Search"
+                variant="outlined"
+
+            />
+
+        </div>
     );
 }

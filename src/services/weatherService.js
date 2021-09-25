@@ -88,7 +88,7 @@ async function getLocationsList(userInput) {
 
 
 function _getFormatedLocation(localizedName, key, country) {
-    return { ...localizedName, key, country }
+    return { localizedName, key, country }
 }
 
 
