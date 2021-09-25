@@ -3,6 +3,7 @@ import { utilService } from './utilService'
 import { storageService } from './storageService'
 
 
+
 export const weatherService = {
     getLocation,
     getForecastByLocationKey,
@@ -30,17 +31,20 @@ async function getLocation() {
         try {
             const { coords } = await utilService.getCurrentPosition()
             const { latitude, longitude } = coords
-            currLocation = await _getLocationCodeByGeoLocation(latitude, longitude)
+            currLocation = await _getLocationCodeByGeoLocation(latitude, longitude) || null
 
         }
         catch (err) {
             console.log(`getLocation error`, err)
-            currLocation = { ...initialLocation }
-
         }
-        storageService.save(CURRENT_LOCATION, { ...currLocation, date: Date.now() })
-    }
+        finally {
+            if (!currLocation) {
+                currLocation = { ...initialLocation }
+            }
+        }
 
+    }
+    storageService.save(CURRENT_LOCATION, {currLocation, date: Date.now() })
     return currLocation
 
 }
@@ -103,7 +107,7 @@ function _getFormatedLocation(localizedName, key, country, withId = false) {
 function _getFormatedForecast(forecast) {
     let dateTime = new Date(forecast['Date'])
     return {
-        forecastId:utilService.makeId(),
+        forecastId: utilService.makeId(),
         date: dateTime.toDateString(),
         dayForecast: {
             icon: forecast['Day']['Icon'],
