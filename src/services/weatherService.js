@@ -44,7 +44,7 @@ async function getLocation() {
         }
 
     }
-    storageService.save(CURRENT_LOCATION, {currLocation, date: Date.now() })
+    storageService.save(CURRENT_LOCATION, currLocation)
     return currLocation
 
 }
