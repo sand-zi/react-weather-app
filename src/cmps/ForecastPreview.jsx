@@ -18,7 +18,7 @@ String.fromCodePoint(parseInt('0x2103', 16))
 export const ForecastPreview = ({ forecast, isFahrenheit, setIsFahrenheit }) => {
 
     const [isDayForecastShown, setIsDayForecastShown] = useState(true)
-    
+
     const temoUnicode = (isFahrenheit) ? String.fromCodePoint(parseInt('0x2109', 16)) : String.fromCodePoint(parseInt('0x2103', 16))
 
     const convertTemp = (temp) => {
@@ -32,7 +32,7 @@ export const ForecastPreview = ({ forecast, isFahrenheit, setIsFahrenheit }) => 
                     alignItems="center">
                     <Grid item>
                         <ButtonBase sx={{ width: 128, height: 128 }}>
-                            <Img alt="complex" src={(isDayForecastShown) ? `./images/${forecast.dayForecast.icon}.png` : `./images/${forecast.nightForecast.icon}.png`} />
+                            <Img alt="complex" src={(isDayForecastShown) ? require(`../assets/images/${forecast.dayForecast.icon}.png`).default : require(`../assets/images/${forecast.nightForecast.icon}.png`).default} />
                         </ButtonBase>
                     </Grid>
                     <Grid item xs={12} sm container>
@@ -51,11 +51,11 @@ export const ForecastPreview = ({ forecast, isFahrenheit, setIsFahrenheit }) => 
                                 </Typography>
                             </Grid>
                             <Grid item>
-                             
-                                    <Typography sx={{ cursor: 'pointer' }} variant="body2" onClick={() => setIsDayForecastShown(!isDayForecastShown)} textAlign='center'>
-                                        Check {(isDayForecastShown) ? 'Night' : 'Day'} Forecast
-                                    </Typography>
-                                
+
+                                <Typography sx={{ cursor: 'pointer' }} variant="body2" onClick={() => setIsDayForecastShown(!isDayForecastShown)} textAlign='center'>
+                                    Check {(isDayForecastShown) ? 'Night' : 'Day'} Forecast
+                                </Typography>
+
                             </Grid>
                         </Grid>
 
