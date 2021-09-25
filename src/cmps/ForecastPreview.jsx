@@ -14,14 +14,19 @@ const Img = styled('img')({
     maxWidth: '100%',
     maxHeight: '100%',
 });
-
-export const ForecastPreview = ({ forecast }) => {
+String.fromCodePoint(parseInt('0x2103', 16))
+export const ForecastPreview = ({ forecast, isFahrenheit, setIsFahrenheit }) => {
 
     const [isDayForecastShown, setIsDayForecastShown] = useState(true)
+    
+    const temoUnicode = (isFahrenheit) ? String.fromCodePoint(parseInt('0x2109', 16)) : String.fromCodePoint(parseInt('0x2103', 16))
 
+    const convertTemp = (temp) => {
+        return (isFahrenheit) ? ((temp * 9 / 5) + 32) : temp
+    }
     return (
         <div className="forecast-preview">
-            <Paper sx={{ p: 2, margin: 'auto', flexGrow: 1 }}>
+            <Paper sx={{ p: 2, margin: 'auto', flexGrow: 1, width: 200 }}>
                 <Grid container direction="column"
                     justifyContent="center"
                     alignItems="center">
@@ -40,13 +45,17 @@ export const ForecastPreview = ({ forecast }) => {
                                     {(isDayForecastShown) ? forecast.dayForecast.iconPhrase : forecast.nightForecast.iconPhrase}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" textAlign='center'>
-                                    {(isDayForecastShown) ? forecast.dayForecast.temperature : forecast.nightForecast.temperature}
+                                    {(isDayForecastShown) ? convertTemp(+forecast.dayForecast.temperature) : convertTemp(+forecast.nightForecast.temperature)}
+                                    {temoUnicode}
+
                                 </Typography>
                             </Grid>
                             <Grid item>
-                                <Typography sx={{ cursor: 'pointer' }} variant="body2" onClick={() => setIsDayForecastShown(!isDayForecastShown)} textAlign='center'>
-                                    Check {(isDayForecastShown) ? 'Night' : 'Day'} Forecast
-                                </Typography>
+                             
+                                    <Typography sx={{ cursor: 'pointer' }} variant="body2" onClick={() => setIsDayForecastShown(!isDayForecastShown)} textAlign='center'>
+                                        Check {(isDayForecastShown) ? 'Night' : 'Day'} Forecast
+                                    </Typography>
+                                
                             </Grid>
                         </Grid>
 

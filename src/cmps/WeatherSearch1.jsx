@@ -6,7 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { weatherService } from '../services/weatherService.js'
-// https://www.freecodecamp.org/news/debounce-and-throttle-in-react-with-hooks/ let's try this one with the textfield
+
 
 export const WeatherSearch1 = () => {
 
