@@ -6,10 +6,11 @@ import { storageService } from './storageService'
 export const weatherService = {
     getLocation,
     getForecastByLocationKey,
-    getLocationsList, 
+    getLocationsList,
     saveLocation
 }
 
+const CURRENT_FORECAST = 'CurrForecast'
 const CURRENT_LOCATION = 'CurrLocation'
 const API_KEY = 'sh0OUQ7RvtXa9uUhfJCXLc3lNEqpVCeS'
 const initialLocation = {
@@ -45,14 +46,21 @@ async function getLocation() {
 }
 
 
-
-
 async function getForecastByLocationKey(cityKey) {
     try {
         const res = await axios.get(`http://dataservice.accuweather.com/forecasts/v1/daily/5day/${cityKey}?apikey=${API_KEY}&metric=true`)
-        return (res.data['DailyForecasts'].length) ? res.data['DailyForecasts'] : []
+        if ((res.data['DailyForecasts'].length)) {
+            const forecasts = res.data['DailyForecasts'].map(forecast => _getFormatedForecast(forecast))
+            storageService.save(CURRENT_FORECAST, { forecasts, date: Date.now() })
+            return forecasts
+        } else {
+            return []
+        }
+
+        // storageService.save(CURRENT_FORECAST, { forecast: [...res.data['DailyForecasts']], date: Date.now() })
+        // return (res.data['DailyForecasts'].length) ? res.data['DailyForecasts'] : []
     } catch (err) {
-        console.log(`getForecastByLocationKey`)
+        console.log(`getForecastByLocationKey function from weatherService`, err)
     }
 
 }
@@ -90,6 +98,25 @@ async function getLocationsList(userInput) {
 function _getFormatedLocation(localizedName, key, country, withId = false) {
 
     return (withId) ? { localizedName, key, country, id: utilService.makeId() } : { localizedName, key, country }
+}
+
+function _getFormatedForecast(forecast) {
+    let dateTime = new Date(forecast['Date'])
+    return {
+        forecastId:utilService.makeId(),
+        date: dateTime.toDateString(),
+        dayForecast: {
+            icon: forecast['Day']['Icon'],
+            iconPhrase: forecast['Day']['IconPhrase'],
+            temperature: forecast['Temperature']['Maximum']['Value']
+        },
+        nighForecast: {
+            icon: forecast['Night']['Icon'],
+            iconPhrase: forecast['Night']['IconPhrase'],
+            temperature: forecast['Temperature']['Minimum']['Value']
+        }
+
+    }
 }
 
 function saveLocation(location) {

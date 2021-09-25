@@ -26,13 +26,16 @@ export const WeatherApp = () => {
     const onSelectLocation = useCallback(location => {
         dispatch(updateCurrentLocation({ ...location }))
         setOptions([])
-    })
+    }, [dispatch])
 
 
     return (
         <div className="weather-app">
-            <WeatherSearch setOptions={setOptions} />
-            {(options.length > 0) && <OptionList options={options} onSelectLocation={onSelectLocation} />}
+            <div className="weather search">
+                <WeatherSearch setOptions={setOptions} />
+                {(options.length > 0) && <OptionList options={options} onSelectLocation={onSelectLocation} />}
+            </div>
+
             {(forecasts.length > 0) && <ForecastList forecasts={forecasts} />}
         </div>
     )
