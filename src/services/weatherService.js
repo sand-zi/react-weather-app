@@ -110,7 +110,7 @@ function _getFormatedForecast(forecast) {
             iconPhrase: forecast['Day']['IconPhrase'],
             temperature: forecast['Temperature']['Maximum']['Value']
         },
-        nighForecast: {
+        nightForecast: {
             icon: forecast['Night']['Icon'],
             iconPhrase: forecast['Night']['IconPhrase'],
             temperature: forecast['Temperature']['Minimum']['Value']
